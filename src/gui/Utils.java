@@ -3,6 +3,7 @@ package gui;
 import java.awt.Color;
 
 import javax.swing.JComboBox;
+import javax.swing.JTextField;
 
 public class Utils {
 	
@@ -11,7 +12,15 @@ public class Utils {
 	
 	public Utils() {}
 	
+	public static boolean isCategoryNameNull(JComboBox<String> category) {
+		return category.getSelectedItem() == null ? true : false;
+	}
+	
 	public static String getCategoryName(JComboBox<String> category) {
 		return category.getSelectedItem().toString();
+	}
+	
+	public static String getNewCategoryName(JTextField newCategory) {
+		return newCategory.getText().toString();
 	}
 }

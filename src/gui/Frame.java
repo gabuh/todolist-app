@@ -22,10 +22,10 @@ public class Frame extends JFrame {
 	public static final int FRAME_HEIGHT = 735;
 	
 	private JPanel contentPane;
-	private JPanel panel = new JPanel();
-	JComboBox<String> categoryList =  new JComboBox<String>();;
+	public static JPanel panel = new JPanel();
+	public static JComboBox<String> categoryList =  new JComboBox<String>();;
 	
-	List<String> categoriesArrayList = new ArrayList<String>();
+	public static List<String> categoriesArrayList = new ArrayList<String>();
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -89,7 +89,7 @@ public class Frame extends JFrame {
 		panel.add(addCategoryButton);
 	}
 	
-	public void updateCategoryList() {
+	public static void updateCategoryList() {
 		panel.remove(categoryList);
 		
 		categoryList.setMaximumRowCount(20);

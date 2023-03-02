@@ -9,33 +9,49 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
 
 public class NewCategoryFrame extends JFrame{
 
 	private static final long serialVersionUID = 1L;
+	private JTextField newCategoryName;
 
 	public NewCategoryFrame() {
 		setUndecorated(false);
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{81, 89, 0, 0};
-		gridBagLayout.rowHeights = new int[]{362, 23, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-		getContentPane().setLayout(gridBagLayout);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		JButton cancelNewCategoryButton = new JButton("Cancel");
+		cancelNewCategoryButton.setBounds(81, 362, 93, 25);
 		cancelNewCategoryButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		GridBagConstraints gbc_cancelNewCategoryButton = new GridBagConstraints();
-		gbc_cancelNewCategoryButton.insets = new Insets(0, 0, 0, 5);
-		gbc_cancelNewCategoryButton.anchor = GridBagConstraints.NORTHWEST;
-		gbc_cancelNewCategoryButton.gridx = 1;
-		gbc_cancelNewCategoryButton.gridy = 1;
+		cancelNewCategoryButton.setFocusable(false);
+		cancelNewCategoryButton.setBackground(Utils.sColor);
 		cancelNewCategoryButton.addActionListener(e->dispose());
+		getContentPane().setLayout(null);
+		
+		newCategoryName = new JTextField();
+		newCategoryName.setBounds(81, 98, 408, 37);
+		getContentPane().add(newCategoryName);
+		newCategoryName.setColumns(10);
 		cancelNewCategoryButton.setBackground(Utils.sColor);
 		cancelNewCategoryButton.setFocusable(false);
-		getContentPane().add(cancelNewCategoryButton, gbc_cancelNewCategoryButton);
+		getContentPane().add(cancelNewCategoryButton);
+		
+		JButton addNewCategoryButton = new JButton("Add");
+		addNewCategoryButton.setBounds(405, 362, 84, 25);
+		addNewCategoryButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		addNewCategoryButton.setFocusable(false);
+		addNewCategoryButton.setBackground(Utils.sColor);
+		addNewCategoryButton.addActionListener(e -> addNewCategory());
+		getContentPane().add(addNewCategoryButton);
+		
+		JLabel newCategoryLabel = new JLabel("Name");
+		newCategoryLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		newCategoryLabel.setBounds(81, 62, 113, 25);
+		getContentPane().add(newCategoryLabel);
 		
 		
 		setBounds(100+(Frame.FRAME_WIDTH/3), 150, 600, 450);
@@ -43,4 +59,11 @@ public class NewCategoryFrame extends JFrame{
 	
 
 	}
+	
+	private void addNewCategory() {
+		Frame.categoriesArrayList.add(Utils.getNewCategoryName(newCategoryName));
+		Frame.updateCategoryList();
+		this.dispose();
+	}
+	
 }

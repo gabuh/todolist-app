@@ -12,6 +12,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import model.dao.CategoryDao;
+import model.dao.DaoFactory;
+import model.entities.Category;
+
 import javax.swing.SwingConstants;
 
 public class Frame extends JFrame {
@@ -21,13 +26,18 @@ public class Frame extends JFrame {
 	public static final int FRAME_WIDTH = 1385;
 	public static final int FRAME_HEIGHT = 735;
 	
+	public static CategoryDao categoryDao = DaoFactory.createCategoryDao();
+	
 	private JPanel contentPane;
 	public static JPanel panel = new JPanel();
 	public static JComboBox<String> categoryList =  new JComboBox<String>();;
 	
 	public static List<String> categoriesArrayList = new ArrayList<String>();
 	
+	JLabel categoryName = new JLabel("Default");
+	
 	public static void main(String[] args) {
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -51,7 +61,7 @@ public class Frame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel categoryName = new JLabel("Default");
+		
 		categoryName.setHorizontalAlignment(SwingConstants.CENTER);
 		categoryName.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		categoryName.setBounds(383, 37, 976, 31);
@@ -63,11 +73,7 @@ public class Frame extends JFrame {
 		panel.setLayout(null);
 		
 		updateCategoryList();
-		categoriesArrayList.add("aaaaaaaaaaaaaa");
-		categoriesArrayList.add("bbbbbbbbbbbbbb");
-		categoriesArrayList.add("cccccccccccccc");
-		categoriesArrayList.add("dddddddddddddd");
-		updateCategoryList();
+		
 		
 		JLabel categoryLabel = new JLabel("Category");
 		categoryLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -78,7 +84,7 @@ public class Frame extends JFrame {
 		okCategoryButton.setBounds(279, 81, 84, 23);
 		okCategoryButton.setFocusable(false);	
 		okCategoryButton.setBackground(Utils.sColor);
-		okCategoryButton.addActionListener(e -> categoryName.setText(Utils.getCategoryName(categoryList)));
+		okCategoryButton.addActionListener(e -> setCategoryNameLabel());
 		panel.add(okCategoryButton);
 		
 		JButton addCategoryButton = new JButton("Add category");
@@ -87,6 +93,7 @@ public class Frame extends JFrame {
 		addCategoryButton.addActionListener(e -> {NewCategoryFrame a = new NewCategoryFrame();});
 		addCategoryButton.setBounds(10, 618, 353, 23);
 		panel.add(addCategoryButton);
+
 	}
 	
 	public static void updateCategoryList() {
@@ -94,10 +101,23 @@ public class Frame extends JFrame {
 		
 		categoryList.setMaximumRowCount(20);
 		
+		/*
 		String[] categories = categoriesArrayList.toArray(new String[(categoriesArrayList.size())]);
+		*/
 		
-		categoryList.setModel(new DefaultComboBoxModel<String>(categories));
+		List<Category> list = categoryDao.findAll();
+		List<String> nameList = new ArrayList<>();
+		for(Category c : list) {
+			nameList.add(c.getName());
+		}
+		
+		categoryList.setModel(new DefaultComboBoxModel<String>(nameList.toArray(new String[(list.size())])/*categories*/));
 		categoryList.setBounds(10, 81, 259, 22);
 		panel.add(categoryList);
+	}
+	
+	private void setCategoryNameLabel() {
+		if(Utils.isCategoryNameNull(categoryList) == false) 
+			categoryName.setText(Utils.getCategoryName(categoryList));
 	}
 }

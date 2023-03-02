@@ -12,6 +12,10 @@ public class Utils {
 	
 	public Utils() {}
 	
+	public static boolean isCategoryNameNull(JComboBox<String> category) {
+		return category.getSelectedItem() == null ? true : false;
+	}
+	
 	public static String getCategoryName(JComboBox<String> category) {
 		return category.getSelectedItem().toString();
 	}

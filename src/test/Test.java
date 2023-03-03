@@ -1,6 +1,5 @@
 package test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import model.dao.CategoryDao;
@@ -17,7 +16,19 @@ public class Test {
 		for(Category c : list) {
 			System.out.println(c);
 		}
-
+		
+		/* ok
+		Category category = new Category();
+		category.setName("faculdade");
+		categoryDao.add(category);
+		System.out.println("added a new category");
+		*/
+		
+		list = categoryDao.findAll();
+		for(Category c : list) {
+			System.out.println(c);
+		}
+		
 	}
 
 }

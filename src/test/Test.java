@@ -24,10 +24,20 @@ public class Test {
 		System.out.println("added a new category");
 		*/
 		
+		/*
+		categoryDao.delete(6);
+		System.out.println("deleted");
+		*/
+		
 		list = categoryDao.findAll();
 		for(Category c : list) {
 			System.out.println(c);
 		}
+		
+		System.out.println("========================");
+		
+		Category category = categoryDao.findByName("mercado");
+		System.out.println(category);
 		
 	}
 

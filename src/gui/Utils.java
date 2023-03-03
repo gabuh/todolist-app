@@ -16,6 +16,12 @@ public class Utils {
 		return category.getSelectedItem() == null ? true : false;
 	}
 	
+	/*
+	public static Category getCategory(JComboBox<String> category) {
+		return (Category) category.getSelectedItem();
+	}
+	*/
+	
 	public static String getCategoryName(JComboBox<String> category) {
 		return category.getSelectedItem().toString();
 	}

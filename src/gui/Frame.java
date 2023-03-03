@@ -38,11 +38,15 @@ public class Frame extends JFrame {
 	public static JPanel panel = new JPanel();
 	public static JComboBox<String> categoryList =  new JComboBox<String>();;
 	
+	public static Category currCategory = null;
 	
-	//static List<String> categoriesArrayList = new ArrayList<String>();
 	private JTextField textField;
+	
+	private JButton deleteCategoryButton;
+	
+	private String defaultCategoryName = "Select a category to add tasks to";
 
-	JLabel categoryName = new JLabel("Select a category to add tasks to");
+	JLabel categoryName = new JLabel(defaultCategoryName);
 	
 	public static void main(String[] args) {
 
@@ -60,10 +64,10 @@ public class Frame extends JFrame {
 
 	
 	public Frame() {
+		setResizable(false);
 		setTitle("todo list app");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, Frame.FRAME_WIDTH, Frame.FRAME_HEIGHT);
-		setResizable(false);
+		setBounds(100, 100, 1385, 735);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -83,7 +87,6 @@ public class Frame extends JFrame {
 		
 		updateCategoryList();
 		
-		
 		JLabel categoryLabel = new JLabel("Category");
 		categoryLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
 		categoryLabel.setBounds(10, 48, 353, 22);
@@ -93,7 +96,7 @@ public class Frame extends JFrame {
 		okCategoryButton.setBounds(279, 81, 84, 23);
 		okCategoryButton.setFocusable(false);	
 		okCategoryButton.setBackground(Utils.sColor);
-		okCategoryButton.addActionListener(e -> setCategoryNameLabel());
+		okCategoryButton.addActionListener(e -> updateCategoryDashboard());
 		panel.add(okCategoryButton);
 		
 		JButton addCategoryButton = new JButton("Add category");
@@ -168,6 +171,23 @@ public class Frame extends JFrame {
 			}
 		});
 		contentPane.add(addNewTaskButton);
+		
+		
+		
+		//delete category button
+		
+		deleteCategoryButton = new JButton("Delete category");		
+		deleteCategoryButton.setVisible(false);
+		deleteCategoryButton.addActionListener(e -> deleteCurrentCategory());
+		deleteCategoryButton.setFocusable(false);
+		deleteCategoryButton.setBackground(Utils.sColor);
+		deleteCategoryButton.setBounds(383, 11, 126, 23);
+		contentPane.add(deleteCategoryButton);
+		
+		
+		//----
+		
+		
 		//----
 	
 		//----
@@ -215,8 +235,31 @@ public class Frame extends JFrame {
 		panel.add(categoryList);
 	}
 	
-	private void setCategoryNameLabel() {
-		if(Utils.isCategoryNameNull(categoryList) == false) 
+	private void updateCategoryDashboard() { 
+		
+		if(Utils.isCategoryNameNull(categoryList) == false) {
 			categoryName.setText(Utils.getCategoryName(categoryList));
+			currCategory = categoryDao.findByName(Utils.getCategoryName(categoryList));
+		}
+		
+		if(currCategory == null) {
+			deleteCategoryButton.setVisible(false);
+		}else {
+			deleteCategoryButton.setVisible(true);
+		}
 	}
+	
+	private void deleteCurrentCategory() {
+		if(currCategory == null) {
+			return;
+		}
+		categoryDao.delete(currCategory.getId());
+		currCategory = null;
+
+		updateCategoryDashboard();
+		updateCategoryList();
+		
+		categoryName.setText(defaultCategoryName);
+	}
+
 }

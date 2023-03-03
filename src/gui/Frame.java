@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -18,6 +19,9 @@ import model.dao.DaoFactory;
 import model.entities.Category;
 
 import javax.swing.SwingConstants;
+import javax.swing.JScrollPane;
+import javax.swing.JList;
+import javax.swing.JTextField;
 
 public class Frame extends JFrame {
 
@@ -32,8 +36,10 @@ public class Frame extends JFrame {
 	public static JPanel panel = new JPanel();
 	public static JComboBox<String> categoryList =  new JComboBox<String>();;
 	
-	public static List<String> categoriesArrayList = new ArrayList<String>();
-	
+
+	static List<String> categoriesArrayList = new ArrayList<String>();
+	private JTextField textField;
+
 	JLabel categoryName = new JLabel("Default");
 	
 	public static void main(String[] args) {
@@ -94,9 +100,99 @@ public class Frame extends JFrame {
 		addCategoryButton.setBounds(10, 618, 353, 23);
 		panel.add(addCategoryButton);
 
-	}
+		
+		//Check-Box list 1 - new TASKS
+		JScrollPane scrollPane = new JScrollPane(); 
+		scrollPane.setBounds(383, 133, 976, 358);
+		contentPane.add(scrollPane);
+		
+		DefaultListModel<CheckListTask> listModel = new DefaultListModel<>();
+
+		JList<CheckListTask> list = new JList<CheckListTask>(listModel);
+		scrollPane.setViewportView(list);
+		list.setCellRenderer(new CheckListRenderer());
+		
+		//----------
+		
+		//Check-Box list 2 - completed tasks
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(383, 513, 976, 172);
+		contentPane.add(scrollPane_1);
+		DefaultListModel<CheckListTask> listModel1 = new DefaultListModel<>();
+		
+		JList<CheckListTask> list_1 = new JList<CheckListTask>(listModel1);
+		scrollPane_1.setViewportView(list_1);
+		list_1.setCellRenderer(new CheckListRenderer());
+		
+		JLabel lblNewLabel = new JLabel("Done");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblNewLabel.setBounds(383, 498, 46, 14);
+		contentPane.add(lblNewLabel);
+		
+		JLabel lblTodo = new JLabel("To-Do");
+		lblTodo.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblTodo.setBounds(383, 96, 46, 14);
+		contentPane.add(lblTodo);
+		
+		JButton btnNewButton = new JButton("Clear");
+		btnNewButton.setBounds(1270, 491, 89, 20);
+		btnNewButton.addActionListener(btn -> { listModel1.removeAllElements();});
+		contentPane.add(btnNewButton);
+		//----
+		
+		//Add CheckListTask
+		textField = new JTextField();
+		textField.setBounds(383, 112, 976, 20);
+		contentPane.add(textField);
+		textField.setColumns(10);
+		textField.addActionListener(txtf -> {
+			if(!textField.getText().equalsIgnoreCase("")){
+			listModel.addElement(new CheckListTask(textField.getText()));
+			textField.setText("");
+			}
+		});
+		
+		JButton btnNewButton_1 = new JButton("Add");
+		btnNewButton_1.setBounds(1270, 89, 89, 20);
+		btnNewButton_1.addActionListener(btn1 -> {
+			if(!textField.getText().equalsIgnoreCase("")){
+			listModel.addElement(new CheckListTask(textField.getText()));
+			textField.setText("");
+			}
+		});
+		contentPane.add(btnNewButton_1);
+		//----
 	
+		//----
+		
+		//Check-Box Event listener
+		list.addListSelectionListener(e ->{
+				if (!e.getValueIsAdjusting()) {
+					int index = list.getSelectedIndex();
+					if (index >= 0) {
+						CheckListTask item = listModel.getElementAt(index);
+						item.setSelected(!item.getStatus());
+						listModel.removeElement(item);
+						listModel1.addElement(item);
+					}
+				}
+			});
+		list_1.addListSelectionListener(e2 ->{
+				if (!e2.getValueIsAdjusting()) {
+					int index = list_1.getSelectedIndex();
+					if (index >= 0) {
+						CheckListTask item = listModel1.getElementAt(index);
+						item.setSelected(!item.getStatus());
+						listModel1.removeElement(item);
+						listModel.addElement(item);
+					}
+				}
+			});
+    }
+		//------
+		
 	public static void updateCategoryList() {
+
 		panel.remove(categoryList);
 		
 		categoryList.setMaximumRowCount(20);

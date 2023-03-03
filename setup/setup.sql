@@ -1,0 +1,3 @@
+CREATE DATABASE todolist;
+USE todolist;
+CREATE TABLE category (id INT NOT NULL, cname VARCHAR(50) NOT NULL, PRIMARY KEY (id));

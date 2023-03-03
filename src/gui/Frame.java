@@ -40,7 +40,7 @@ public class Frame extends JFrame {
 	static List<String> categoriesArrayList = new ArrayList<String>();
 	private JTextField textField;
 
-	JLabel categoryName = new JLabel("Default");
+	JLabel categoryName = new JLabel("Select a category to add tasks to");
 	
 	public static void main(String[] args) {
 
@@ -60,7 +60,8 @@ public class Frame extends JFrame {
 	public Frame() {
 		setTitle("todo list app");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, this.FRAME_WIDTH, this.FRAME_HEIGHT);
+		setBounds(100, 100, Frame.FRAME_WIDTH, Frame.FRAME_HEIGHT);
+		setResizable(false);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -96,48 +97,50 @@ public class Frame extends JFrame {
 		JButton addCategoryButton = new JButton("Add category");
 		addCategoryButton.setFocusable(false);
 		addCategoryButton.setBackground(Utils.sColor);
-		addCategoryButton.addActionListener(e -> {NewCategoryFrame a = new NewCategoryFrame();});
+		addCategoryButton.addActionListener(e -> new NewCategoryFrame());
 		addCategoryButton.setBounds(10, 618, 353, 23);
 		panel.add(addCategoryButton);
 
 		
 		//Check-Box list 1 - new TASKS
-		JScrollPane scrollPane = new JScrollPane(); 
-		scrollPane.setBounds(383, 133, 976, 358);
-		contentPane.add(scrollPane);
+		JScrollPane todoScrollPane = new JScrollPane(); 
+		todoScrollPane.setBounds(383, 133, 976, 358);
+		contentPane.add(todoScrollPane);
 		
-		DefaultListModel<CheckListTask> listModel = new DefaultListModel<>();
+		DefaultListModel<CheckListTask> todoListModel = new DefaultListModel<>();
 
-		JList<CheckListTask> list = new JList<CheckListTask>(listModel);
-		scrollPane.setViewportView(list);
-		list.setCellRenderer(new CheckListRenderer());
+		JList<CheckListTask> todoList = new JList<CheckListTask>(todoListModel);
+		todoScrollPane.setViewportView(todoList);
+		todoList.setCellRenderer(new CheckListRenderer());
 		
 		//----------
 		
 		//Check-Box list 2 - completed tasks
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(383, 513, 976, 172);
-		contentPane.add(scrollPane_1);
-		DefaultListModel<CheckListTask> listModel1 = new DefaultListModel<>();
+		JScrollPane doneScrollPane = new JScrollPane();
+		doneScrollPane.setBounds(383, 513, 976, 172);
+		contentPane.add(doneScrollPane);
+		DefaultListModel<CheckListTask> doneListModel = new DefaultListModel<>();
 		
-		JList<CheckListTask> list_1 = new JList<CheckListTask>(listModel1);
-		scrollPane_1.setViewportView(list_1);
-		list_1.setCellRenderer(new CheckListRenderer());
+		JList<CheckListTask> doneList = new JList<CheckListTask>(doneListModel);
+		doneScrollPane.setViewportView(doneList);
+		doneList.setCellRenderer(new CheckListRenderer());
 		
-		JLabel lblNewLabel = new JLabel("Done");
-		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblNewLabel.setBounds(383, 498, 46, 14);
-		contentPane.add(lblNewLabel);
+		JLabel labelDone = new JLabel("Done");
+		labelDone.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		labelDone.setBounds(383, 498, 46, 14);
+		contentPane.add(labelDone);
 		
-		JLabel lblTodo = new JLabel("To-Do");
-		lblTodo.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblTodo.setBounds(383, 96, 46, 14);
-		contentPane.add(lblTodo);
+		JLabel labelTodo = new JLabel("To-Do");
+		labelTodo.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		labelTodo.setBounds(383, 96, 46, 14);
+		contentPane.add(labelTodo);
 		
-		JButton btnNewButton = new JButton("Clear");
-		btnNewButton.setBounds(1270, 491, 89, 20);
-		btnNewButton.addActionListener(btn -> { listModel1.removeAllElements();});
-		contentPane.add(btnNewButton);
+		JButton clearAllTasksButton = new JButton("Clear");
+		clearAllTasksButton.setBounds(1270, 491, 89, 20);
+		clearAllTasksButton.setFocusable(false);
+		clearAllTasksButton.setBackground(Utils.sColor);
+		clearAllTasksButton.addActionListener(btn -> { doneListModel.removeAllElements();});
+		contentPane.add(clearAllTasksButton);
 		//----
 		
 		//Add CheckListTask
@@ -145,46 +148,48 @@ public class Frame extends JFrame {
 		textField.setBounds(383, 112, 976, 20);
 		contentPane.add(textField);
 		textField.setColumns(10);
-		textField.addActionListener(txtf -> {
+		textField.addActionListener(e -> {
 			if(!textField.getText().equalsIgnoreCase("")){
-			listModel.addElement(new CheckListTask(textField.getText()));
+			todoListModel.addElement(new CheckListTask(textField.getText()));
 			textField.setText("");
 			}
 		});
 		
-		JButton btnNewButton_1 = new JButton("Add");
-		btnNewButton_1.setBounds(1270, 89, 89, 20);
-		btnNewButton_1.addActionListener(btn1 -> {
+		JButton addNewTaskButton = new JButton("Add");
+		addNewTaskButton.setBounds(1270, 89, 89, 20);
+		addNewTaskButton.setFocusable(false);
+		addNewTaskButton.setBackground(Utils.sColor);
+		addNewTaskButton.addActionListener(e -> {
 			if(!textField.getText().equalsIgnoreCase("")){
-			listModel.addElement(new CheckListTask(textField.getText()));
+			todoListModel.addElement(new CheckListTask(textField.getText()));
 			textField.setText("");
 			}
 		});
-		contentPane.add(btnNewButton_1);
+		contentPane.add(addNewTaskButton);
 		//----
 	
 		//----
 		
 		//Check-Box Event listener
-		list.addListSelectionListener(e ->{
+		todoList.addListSelectionListener(e -> {
 				if (!e.getValueIsAdjusting()) {
-					int index = list.getSelectedIndex();
+					int index = todoList.getSelectedIndex();
 					if (index >= 0) {
-						CheckListTask item = listModel.getElementAt(index);
+						CheckListTask item = todoListModel.getElementAt(index);
 						item.setSelected(!item.getStatus());
-						listModel.removeElement(item);
-						listModel1.addElement(item);
+						todoListModel.removeElement(item);
+						doneListModel.addElement(item);
 					}
 				}
 			});
-		list_1.addListSelectionListener(e2 ->{
-				if (!e2.getValueIsAdjusting()) {
-					int index = list_1.getSelectedIndex();
+		doneList.addListSelectionListener(e -> {
+				if (!e.getValueIsAdjusting()) {
+					int index = doneList.getSelectedIndex();
 					if (index >= 0) {
-						CheckListTask item = listModel1.getElementAt(index);
+						CheckListTask item = doneListModel.getElementAt(index);
 						item.setSelected(!item.getStatus());
-						listModel1.removeElement(item);
-						listModel.addElement(item);
+						doneListModel.removeElement(item);
+						todoListModel.addElement(item);
 					}
 				}
 			});

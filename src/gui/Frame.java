@@ -36,10 +36,11 @@ public class Frame extends JFrame {
 	public static JPanel panel = new JPanel();
 	public static JComboBox<String> categoryList =  new JComboBox<String>();;
 	
-
-	List<String> categoriesArrayList = new ArrayList<String>();
+	
+	static List<String> categoriesArrayList = new ArrayList<String>();
 	private JTextField textField;
 
+	JLabel categoryName = new JLabel("Default");
 	
 	public static void main(String[] args) {
 

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +56,40 @@ public class CategoryDaoJDBC implements CategoryDao{
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}
+	}
+
+	@Override
+	public void add(Category category) {
+		PreparedStatement st = null;
+		
+		try {
+			st = conn.prepareStatement(
+					"INSERT INTO category "
+					+"(cname) "
+					+"VALUES "
+					+"(?)", Statement.RETURN_GENERATED_KEYS);
+			
+			st.setString(1, category.getName());
+			
+			int rowsAffected = st.executeUpdate();
+			
+			if(rowsAffected > 0) {
+				ResultSet rs = st.getGeneratedKeys();
+				if(rs.next()) {
+					int id = rs.getInt(1);
+					category.setId(id);
+				}
+				DB.closeResultSet(rs);
+			}else {
+				System.err.println("couldnt insert into category table");
+			}
+			
+		}catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}finally {
+			DB.closeStatement(st);
+		}
+		
 	}
 	
 	

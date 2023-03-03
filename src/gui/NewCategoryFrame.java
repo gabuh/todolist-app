@@ -4,6 +4,9 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import java.awt.Font;
 import javax.swing.JTextField;
+
+import model.entities.Category;
+
 import javax.swing.JLabel;
 
 public class NewCategoryFrame extends JFrame{
@@ -53,7 +56,12 @@ public class NewCategoryFrame extends JFrame{
 	}
 	
 	private void addNewCategory() {
+		Category category = new Category();
+		category.setName(Utils.getNewCategoryName(newCategoryName));
+		Frame.categoryDao.add(category);
+		/*
 		Frame.categoriesArrayList.add(Utils.getNewCategoryName(newCategoryName));
+		*/
 		Frame.updateCategoryList();
 		this.dispose();
 	}

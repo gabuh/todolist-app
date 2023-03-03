@@ -32,12 +32,14 @@ public class Frame extends JFrame {
 	
 	public static CategoryDao categoryDao = DaoFactory.createCategoryDao();
 	
+	public static List<Category> list;
+	
 	private JPanel contentPane;
 	public static JPanel panel = new JPanel();
 	public static JComboBox<String> categoryList =  new JComboBox<String>();;
 	
 	
-	static List<String> categoriesArrayList = new ArrayList<String>();
+	//static List<String> categoriesArrayList = new ArrayList<String>();
 	private JTextField textField;
 
 	JLabel categoryName = new JLabel("Select a category to add tasks to");
@@ -202,17 +204,13 @@ public class Frame extends JFrame {
 		
 		categoryList.setMaximumRowCount(20);
 		
-		/*
-		String[] categories = categoriesArrayList.toArray(new String[(categoriesArrayList.size())]);
-		*/
-		
-		List<Category> list = categoryDao.findAll();
+		list = categoryDao.findAll();
 		List<String> nameList = new ArrayList<>();
 		for(Category c : list) {
 			nameList.add(c.getName());
 		}
 		
-		categoryList.setModel(new DefaultComboBoxModel<String>(nameList.toArray(new String[(list.size())])/*categories*/));
+		categoryList.setModel(new DefaultComboBoxModel<String>(nameList.toArray(new String[(list.size())])));
 		categoryList.setBounds(10, 81, 259, 22);
 		panel.add(categoryList);
 	}

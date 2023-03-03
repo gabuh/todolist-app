@@ -59,9 +59,7 @@ public class NewCategoryFrame extends JFrame{
 		Category category = new Category();
 		category.setName(Utils.getNewCategoryName(newCategoryName));
 		Frame.categoryDao.add(category);
-		/*
-		Frame.categoriesArrayList.add(Utils.getNewCategoryName(newCategoryName));
-		*/
+
 		Frame.updateCategoryList();
 		this.dispose();
 	}

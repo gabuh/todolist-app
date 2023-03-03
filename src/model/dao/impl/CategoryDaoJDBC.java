@@ -91,6 +91,56 @@ public class CategoryDaoJDBC implements CategoryDao{
 		}
 		
 	}
+
+	@Override
+	public void delete(Integer id) {
+		PreparedStatement st = null;
+		
+		try {
+			st = conn.prepareStatement(
+					"DELETE FROM category WHERE id = ?");
+			
+			st.setInt(1, id);
+			
+			int rowsAffected = st.executeUpdate();
+			
+			if(rowsAffected == 0) {
+				throw new DbException("couldnt delete the category [ id = "+id+" ]");
+			}
+		}catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}finally {
+			DB.closeStatement(st);
+		}
+	}
+
+	@Override
+	public Category findByName(String name) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		try {
+			st = conn.prepareStatement(
+					"SELECT category.* "
+					+"FROM category "
+					+"WHERE category.cname = ?");
+			
+			st.setString(1, name);
+			rs = st.executeQuery();
+			
+			if(rs.next()) {
+				Category category = instantiateCategory(rs);
+				return category;
+			}
+			return null;
+			
+		}catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+	}
 	
 	
 }

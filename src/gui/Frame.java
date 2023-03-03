@@ -36,7 +36,7 @@ public class Frame extends JFrame {
 	public static JPanel panel = new JPanel();
 	public static JComboBox<String> categoryList =  new JComboBox<String>();;
 	
-
+	
 	static List<String> categoriesArrayList = new ArrayList<String>();
 	private JTextField textField;
 

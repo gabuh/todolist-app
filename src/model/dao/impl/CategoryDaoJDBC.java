@@ -8,8 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import db.DB;
-import db.DbException;
+import DB.DB;
+import DB.DbException;
 import model.dao.CategoryDao;
 import model.entities.Category;
 

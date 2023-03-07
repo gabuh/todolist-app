@@ -168,7 +168,7 @@ public class TaskDaoJDBC implements TaskDao{
 		}
 	}
 	@Override
-	public void removeAll(Integer idCategory) {
+	public void deleteAllTrue(Integer idCategory) {
 			PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
@@ -211,6 +211,26 @@ public class TaskDaoJDBC implements TaskDao{
 		}finally {
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
+		}
+	}
+	@Override
+	public void deleteAllByCategoryId(Integer idCategory) {
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement(
+					"DELETE FROM task WHERE idCategory = ?");
+			
+				st.setInt(1, idCategory);
+			
+			int rowsAffected = st.executeUpdate();
+			
+			if(rowsAffected == 0) {
+				throw new DbException("couldnt delete tasks from category [ idCategory = "+idCategory+" ]");
+			}
+		}catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}finally {
+			DB.closeStatement(st);
 		}
 	}
 }

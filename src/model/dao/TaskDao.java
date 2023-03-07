@@ -12,5 +12,6 @@ public interface TaskDao {
 	void add(Task task);
 	void delete(Integer id);
 	void updateState(Integer id,boolean state);
-	void removeAll(Integer idCategory);
+	void deleteAllTrue(Integer idCategory);
+	void deleteAllByCategoryId(Integer idCategory);
 }

@@ -151,7 +151,7 @@ public class Frame extends JFrame {
 		clearAllTasksButton.addActionListener(btn -> { 
 			if(currCategory != null || !doneListModel.isEmpty()){
 				doneListModel.removeAllElements();
-				taskDao.removeAll(currCategory.getId());
+				taskDao.deleteAllTrue(currCategory.getId());
 			}
 		});
 		contentPane.add(clearAllTasksButton);
@@ -163,11 +163,12 @@ public class Frame extends JFrame {
 		contentPane.add(textField);
 		textField.setColumns(10);
 		textField.addActionListener(e -> {
-			if(!textField.getText().equalsIgnoreCase("") || currCategory != null){
+			if(!textField.getText().equalsIgnoreCase("") && currCategory != null){
 			Task task = new Task(textField.getText());
 			task.setIdCategory(currCategory.getId());
 			taskDao.add(task);
 			todoListModel.addElement(task);
+			taskListBuff.add(task);
 			textField.setText("");
 			}
 		});
@@ -177,11 +178,12 @@ public class Frame extends JFrame {
 		addNewTaskButton.setFocusable(false);
 		addNewTaskButton.setBackground(Utils.sColor);
 		addNewTaskButton.addActionListener(e -> {
-			if(!textField.getText().equalsIgnoreCase("")){
+			if(!textField.getText().equalsIgnoreCase("") && currCategory != null){
 			Task task = new Task(textField.getText());
 			task.setIdCategory(currCategory.getId());
 			taskDao.add(task);
 			todoListModel.addElement(task);
+			taskListBuff.add(task);
 			textField.setText("");
 			}
 		});
@@ -206,7 +208,7 @@ public class Frame extends JFrame {
 		//----
 
 		categoryName.addPropertyChangeListener(f -> {
-			if(!todoListModel.isEmpty()) {
+			if(!todoListModel.isEmpty()) { 
 				todoListModel.removeAllElements();				
 			}
 			if(!doneListModel.isEmpty()) {
@@ -291,6 +293,9 @@ public class Frame extends JFrame {
 	private void deleteCurrentCategory() {
 		if(currCategory == null) {
 			return;
+		}
+		if(!taskListBuff.isEmpty()) {
+			taskDao.deleteAllByCategoryId(currCategory.getId());			
 		}
 		categoryDao.delete(currCategory.getId());
 		currCategory = null;

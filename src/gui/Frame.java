@@ -16,7 +16,9 @@ import javax.swing.border.EmptyBorder;
 
 import model.dao.CategoryDao;
 import model.dao.DaoFactory;
+import model.dao.TaskDao;
 import model.entities.Category;
+import model.entities.Task;
 
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
@@ -31,8 +33,10 @@ public class Frame extends JFrame {
 	public static final int FRAME_HEIGHT = 735;
 	
 	public static CategoryDao categoryDao = DaoFactory.createCategoryDao();
+	public static TaskDao taskDao = DaoFactory.createTaskDao();
 	
-	public static List<Category> list;
+	public static List<Category> categoryListBuff;
+	public static List<Task> taskListBuff;
 	
 	private JPanel contentPane;
 	public static JPanel panel = new JPanel();
@@ -112,9 +116,9 @@ public class Frame extends JFrame {
 		todoScrollPane.setBounds(383, 133, 976, 358);
 		contentPane.add(todoScrollPane);
 		
-		DefaultListModel<CheckListTask> todoListModel = new DefaultListModel<>();
+		DefaultListModel<Task> todoListModel = new DefaultListModel<>();
 
-		JList<CheckListTask> todoList = new JList<CheckListTask>(todoListModel);
+		JList<Task> todoList = new JList<Task>(todoListModel);
 		todoScrollPane.setViewportView(todoList);
 		todoList.setCellRenderer(new CheckListRenderer());
 		
@@ -124,9 +128,9 @@ public class Frame extends JFrame {
 		JScrollPane doneScrollPane = new JScrollPane();
 		doneScrollPane.setBounds(383, 513, 976, 172);
 		contentPane.add(doneScrollPane);
-		DefaultListModel<CheckListTask> doneListModel = new DefaultListModel<>();
+		DefaultListModel<Task> doneListModel = new DefaultListModel<>();
 		
-		JList<CheckListTask> doneList = new JList<CheckListTask>(doneListModel);
+		JList<Task> doneList = new JList<Task>(doneListModel);
 		doneScrollPane.setViewportView(doneList);
 		doneList.setCellRenderer(new CheckListRenderer());
 		
@@ -144,7 +148,12 @@ public class Frame extends JFrame {
 		clearAllTasksButton.setBounds(1270, 491, 89, 20);
 		clearAllTasksButton.setFocusable(false);
 		clearAllTasksButton.setBackground(Utils.sColor);
-		clearAllTasksButton.addActionListener(btn -> { doneListModel.removeAllElements();});
+		clearAllTasksButton.addActionListener(btn -> { 
+			if(currCategory != null || !doneListModel.isEmpty()){
+				doneListModel.removeAllElements();
+				taskDao.removeAll(currCategory.getId());
+			}
+		});
 		contentPane.add(clearAllTasksButton);
 		//----
 		
@@ -154,8 +163,11 @@ public class Frame extends JFrame {
 		contentPane.add(textField);
 		textField.setColumns(10);
 		textField.addActionListener(e -> {
-			if(!textField.getText().equalsIgnoreCase("")){
-			todoListModel.addElement(new CheckListTask(textField.getText()));
+			if(!textField.getText().equalsIgnoreCase("") || currCategory != null){
+			Task task = new Task(textField.getText());
+			task.setIdCategory(currCategory.getId());
+			taskDao.add(task);
+			todoListModel.addElement(task);
 			textField.setText("");
 			}
 		});
@@ -166,7 +178,7 @@ public class Frame extends JFrame {
 		addNewTaskButton.setBackground(Utils.sColor);
 		addNewTaskButton.addActionListener(e -> {
 			if(!textField.getText().equalsIgnoreCase("")){
-			todoListModel.addElement(new CheckListTask(textField.getText()));
+			todoListModel.addElement(new Task(textField.getText()));
 			textField.setText("");
 			}
 		});
@@ -189,6 +201,30 @@ public class Frame extends JFrame {
 		
 		
 		//----
+
+		categoryName.addPropertyChangeListener(f -> {
+			if(!todoListModel.isEmpty()) {
+				todoListModel.removeAllElements();				
+			}
+			if(!doneListModel.isEmpty()) {
+				doneListModel.removeAllElements();				
+			}
+			if(currCategory != null) {
+				taskListBuff = taskDao.findByCategory(currCategory.getId());
+				for(Task c : taskListBuff) {
+					if(c.getStatus()) {
+						doneListModel.addElement(c);						
+					}else {
+						todoListModel.addElement(c);						
+					}
+				}
+			}
+			doneList.repaint();
+			todoList.repaint();
+		});
+		// Add the label to your Swing application as needed
+
+		
 	
 		//----
 		
@@ -197,8 +233,9 @@ public class Frame extends JFrame {
 				if (!e.getValueIsAdjusting()) {
 					int index = todoList.getSelectedIndex();
 					if (index >= 0) {
-						CheckListTask item = todoListModel.getElementAt(index);
+						Task item = todoListModel.getElementAt(index);
 						item.setSelected(!item.getStatus());
+						taskDao.setState(item.getId(),item.getStatus());
 						todoListModel.removeElement(item);
 						doneListModel.addElement(item);
 					}
@@ -208,8 +245,9 @@ public class Frame extends JFrame {
 				if (!e.getValueIsAdjusting()) {
 					int index = doneList.getSelectedIndex();
 					if (index >= 0) {
-						CheckListTask item = doneListModel.getElementAt(index);
+						Task item = doneListModel.getElementAt(index);
 						item.setSelected(!item.getStatus());
+						taskDao.setState(item.getId(),item.getStatus());
 						doneListModel.removeElement(item);
 						todoListModel.addElement(item);
 					}
@@ -224,13 +262,13 @@ public class Frame extends JFrame {
 		
 		categoryList.setMaximumRowCount(20);
 		
-		list = categoryDao.findAll();
+		categoryListBuff = categoryDao.findAll();
 		List<String> nameList = new ArrayList<>();
-		for(Category c : list) {
+		for(Category c : categoryListBuff) {
 			nameList.add(c.getName());
 		}
 		
-		categoryList.setModel(new DefaultComboBoxModel<String>(nameList.toArray(new String[(list.size())])));
+		categoryList.setModel(new DefaultComboBoxModel<String>(nameList.toArray(new String[(categoryListBuff.size())])));
 		categoryList.setBounds(10, 81, 259, 22);
 		panel.add(categoryList);
 	}
@@ -262,4 +300,7 @@ public class Frame extends JFrame {
 		categoryName.setText(defaultCategoryName);
 	}
 
+
+	
+	
 }

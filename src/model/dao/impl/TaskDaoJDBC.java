@@ -146,7 +146,7 @@ public class TaskDaoJDBC implements TaskDao{
 		
 	}
 	@Override
-	public void setState(Integer id ,boolean state) {
+	public void updateState(Integer id ,boolean state) {
 			PreparedStatement st = null;
 			
 			try {
@@ -172,7 +172,7 @@ public class TaskDaoJDBC implements TaskDao{
 			PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-					"DELETE task WHERE idCategory = ? AND state = false");
+					"DELETE FROM task WHERE idCategory = ? AND state = true");
 			
 				st.setInt(1, idCategory);
 			

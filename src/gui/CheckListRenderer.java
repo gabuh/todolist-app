@@ -14,7 +14,7 @@ public class CheckListRenderer extends JCheckBox implements ListCellRenderer<Tas
         setEnabled(list.isEnabled());
         setSelected(value.getStatus());
         setFont(list.getFont());
-        setText(value.toString());
+        setText(value.getLabel());
         return this;
     }
 }

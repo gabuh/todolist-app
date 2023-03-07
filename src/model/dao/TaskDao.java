@@ -11,6 +11,6 @@ public interface TaskDao {
 	Task findByLabel(String label);
 	void add(Task task);
 	void delete(Integer id);
-	void setState(Integer id,boolean state);
+	void updateState(Integer id,boolean state);
 	void removeAll(Integer idCategory);
 }

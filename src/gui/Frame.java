@@ -178,7 +178,10 @@ public class Frame extends JFrame {
 		addNewTaskButton.setBackground(Utils.sColor);
 		addNewTaskButton.addActionListener(e -> {
 			if(!textField.getText().equalsIgnoreCase("")){
-			todoListModel.addElement(new Task(textField.getText()));
+			Task task = new Task(textField.getText());
+			task.setIdCategory(currCategory.getId());
+			taskDao.add(task);
+			todoListModel.addElement(task);
 			textField.setText("");
 			}
 		});
@@ -219,8 +222,6 @@ public class Frame extends JFrame {
 					}
 				}
 			}
-			doneList.repaint();
-			todoList.repaint();
 		});
 		// Add the label to your Swing application as needed
 
@@ -235,7 +236,7 @@ public class Frame extends JFrame {
 					if (index >= 0) {
 						Task item = todoListModel.getElementAt(index);
 						item.setSelected(!item.getStatus());
-						taskDao.setState(item.getId(),item.getStatus());
+						taskDao.updateState(item.getId(),item.getStatus());
 						todoListModel.removeElement(item);
 						doneListModel.addElement(item);
 					}
@@ -247,7 +248,7 @@ public class Frame extends JFrame {
 					if (index >= 0) {
 						Task item = doneListModel.getElementAt(index);
 						item.setSelected(!item.getStatus());
-						taskDao.setState(item.getId(),item.getStatus());
+						taskDao.updateState(item.getId(),item.getStatus());
 						doneListModel.removeElement(item);
 						todoListModel.addElement(item);
 					}
@@ -276,8 +277,8 @@ public class Frame extends JFrame {
 	private void updateCategoryDashboard() { 
 		
 		if(Utils.isCategoryNameNull(categoryList) == false) {
-			categoryName.setText(Utils.getCategoryName(categoryList));
 			currCategory = categoryDao.findByName(Utils.getCategoryName(categoryList));
+			categoryName.setText(Utils.getCategoryName(categoryList));
 		}
 		
 		if(currCategory == null) {

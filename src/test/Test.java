@@ -58,7 +58,7 @@ public class Test {
 			System.out.println(c);
 		}
 		
-		taskDao.setState(2, true);
+		taskDao.updateState(2, true);
 		
 		System.out.println(taskDao.findByLabel("TOMAR CAFE"));
 		

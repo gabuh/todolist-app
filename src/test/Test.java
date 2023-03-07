@@ -4,7 +4,9 @@ import java.util.List;
 
 import model.dao.CategoryDao;
 import model.dao.DaoFactory;
+import model.dao.TaskDao;
 import model.entities.Category;
+import model.entities.Task;
 
 public class Test {
 
@@ -24,6 +26,7 @@ public class Test {
 		System.out.println("added a new category");
 		*/
 		
+		
 		/*
 		categoryDao.delete(6);
 		System.out.println("deleted");
@@ -38,6 +41,39 @@ public class Test {
 		
 		Category category = categoryDao.findByName("mercado");
 		System.out.println(category);
+		
+		
+		
+		/**
+		 * TEST DE TASK -----------------------------------------------------------------
+		 * -------------------------------------------------------------------------------
+		 */
+		
+		
+		TaskDao taskDao = DaoFactory.createTaskDao();
+		
+		List<Task> listTask = taskDao.findByCategory(3);
+		
+		for(Task c : listTask) {
+			System.out.println(c);
+		}
+		
+		taskDao.setState(2, true);
+		
+		System.out.println(taskDao.findByLabel("TOMAR CAFE"));
+		
+//		Task task = new Task(14,"task nova3");
+//		task.setSelected(true);
+//		taskDao.add(task);
+		
+//		taskDao.delete(14);
+		
+		listTask = taskDao.findAll();
+		for(Task c : listTask) {
+			System.out.println(c);
+		}
+		
+		
 		
 	}
 

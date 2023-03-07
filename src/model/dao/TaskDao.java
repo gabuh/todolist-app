@@ -2,15 +2,16 @@ package model.dao;
 
 import java.util.List;
 
+import model.entities.Category;
 import model.entities.Task;
 
 
 public interface TaskDao {
 	List<Task> findAll();
-	List<Task> findByCategory(Integer Id);
+	List<Task> findByCategory(Category category);
 	Task findByLabel(String label);
 	void add(Task task);
-	void delete(Integer id);
-	void setState(Integer id,boolean state);
-	void removeAll(Integer idCategory);
+	void deleteById(Integer id);
+	void update(Task task);
+	void deleteAllByCategory(Category category);
 }

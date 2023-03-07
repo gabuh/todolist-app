@@ -6,7 +6,7 @@ public class Task {
 	private Integer id;
     private String label;
     private boolean status;
-    private Integer idCategory;
+    private Category category;
     
     public Task(){}
     
@@ -30,30 +30,33 @@ public class Task {
     public void setSelected(boolean isSelected) {
         this.status = isSelected;
     }
-
-    public String toString() {
-        return "Task [id="+ id +", label=" + label + ", status=" + status + ", idCategory=" + idCategory + "]";
-    }
-
-    public int hashCode() {
-    	return Objects.hash(id,label,status,idCategory);
-    }
     
-    public boolean equals(Object obj) {
-    	if (this == obj)
+    
+	
+    @Override
+	public String toString() {
+		return "Task [id=" + id + ", label=" + label + ", status=" + status + ", category=" + category + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(category, id, label, status);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		Task other = (Task) obj;
-		return Objects.equals(id, other.id) && Objects.equals(label, other.label);
-    }
+		return Objects.equals(category, other.category) && Objects.equals(id, other.id)
+				&& Objects.equals(label, other.label) && status == other.status;
+	}
 
-
-
-	
-    public Integer getId() {
+	public Integer getId() {
 		return id;
 	}
 
@@ -81,12 +84,14 @@ public class Task {
 		this.status = status;
 	}
 
-	public Integer getIdCategory() {
-		return idCategory;
+	public Category getCategory() {
+		return category;
 	}
 
-	public void setIdCategory(Integer idCategory) {
-		this.idCategory = idCategory;
+	public void setCategory(Category category) {
+		this.category = category;
 	}
+
+	
 
 }

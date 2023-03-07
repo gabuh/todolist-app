@@ -19,12 +19,12 @@ public class Test {
 			System.out.println(c);
 		}
 		
-		/* ok
-		Category category = new Category();
-		category.setName("faculdade");
-		categoryDao.add(category);
-		System.out.println("added a new category");
-		*/
+		
+		//Category category = new Category();
+		//category.setName("faculdade");
+		//categoryDao.add(category);
+		//System.out.println("added a new category");
+		
 		
 		
 		/*
@@ -39,8 +39,8 @@ public class Test {
 		
 		System.out.println("========================");
 		
-		Category category = categoryDao.findByName("mercado");
-		System.out.println(category);
+		//Category category = categoryDao.findByName("faculdade");
+		//System.out.println(category);
 		
 		
 		
@@ -52,12 +52,45 @@ public class Test {
 		
 		TaskDao taskDao = DaoFactory.createTaskDao();
 		
-		List<Task> listTask = taskDao.findByCategory(3);
+		Category category = categoryDao.findByName("faculdade");
 		
-		for(Task c : listTask) {
-			System.out.println(c);
+		//Task task = new Task("test3");
+		//task.setCategory(category);
+		//taskDao.add(task);
+		
+		List<Task> listTask = taskDao.findAll();
+		
+		for(Task t : listTask) {
+			System.out.println(t);
 		}
 		
+		System.out.println("===============");
+		
+		taskDao.deleteAllByCategory(category);
+		System.out.println("deleted");
+		
+		/*
+		Task task = taskDao.findByLabel("test3");
+		
+		List<Task> listTask2 = taskDao.findByCategory(category);
+		
+		for(Task t : listTask2) {
+			System.out.println(t);
+		}
+		*/
+		
+		//task.setSelected(false);
+		//taskDao.update(task);
+		//System.out.println(task);
+		
+		//System.out.println(task);
+		
+		//taskDao.deleteById(task.getId());
+		//System.out.println("deleted");
+		
+		//taskDao.deleteById(task.getId());
+		//System.out.println("deleted");
+		/*
 		taskDao.setState(2, true);
 		
 		System.out.println(taskDao.findByLabel("TOMAR CAFE"));
@@ -72,7 +105,7 @@ public class Test {
 		for(Task c : listTask) {
 			System.out.println(c);
 		}
-		
+		*/
 		
 		
 	}

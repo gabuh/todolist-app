@@ -42,6 +42,10 @@ public class Frame extends JFrame {
 	public static JPanel panel = new JPanel();
 	public static JComboBox<String> categoryList =  new JComboBox<String>();;
 	
+
+	DefaultListModel<Task> todoListModel = new DefaultListModel<>();
+	DefaultListModel<Task> doneListModel = new DefaultListModel<>();
+	
 	public static Category currCategory = null;
 	
 	private JTextField textField;
@@ -100,7 +104,9 @@ public class Frame extends JFrame {
 		okCategoryButton.setBounds(279, 81, 84, 23);
 		okCategoryButton.setFocusable(false);	
 		okCategoryButton.setBackground(Utils.sColor);
-		okCategoryButton.addActionListener(e -> updateCategoryDashboard());
+		okCategoryButton.addActionListener(e -> {
+			updateCategoryDashboard();
+			updateTasksByCategory(currCategory);});
 		panel.add(okCategoryButton);
 		
 		JButton addCategoryButton = new JButton("Add category");
@@ -115,8 +121,6 @@ public class Frame extends JFrame {
 		JScrollPane todoScrollPane = new JScrollPane(); 
 		todoScrollPane.setBounds(383, 133, 976, 358);
 		contentPane.add(todoScrollPane);
-		
-		DefaultListModel<Task> todoListModel = new DefaultListModel<>();
 
 		JList<Task> todoList = new JList<Task>(todoListModel);
 		todoScrollPane.setViewportView(todoList);
@@ -128,7 +132,6 @@ public class Frame extends JFrame {
 		JScrollPane doneScrollPane = new JScrollPane();
 		doneScrollPane.setBounds(383, 513, 976, 172);
 		contentPane.add(doneScrollPane);
-		DefaultListModel<Task> doneListModel = new DefaultListModel<>();
 		
 		JList<Task> doneList = new JList<Task>(doneListModel);
 		doneScrollPane.setViewportView(doneList);
@@ -148,10 +151,10 @@ public class Frame extends JFrame {
 		clearAllTasksButton.setBounds(1270, 491, 89, 20);
 		clearAllTasksButton.setFocusable(false);
 		clearAllTasksButton.setBackground(Utils.sColor);
-		clearAllTasksButton.addActionListener(btn -> { 
-			if(currCategory != null || !doneListModel.isEmpty()){
-				doneListModel.removeAllElements();
-				taskDao.removeAll(currCategory.getId());
+		clearAllTasksButton.addActionListener(e -> { 
+			if(!doneListModel.isEmpty()){
+				taskDao.deleteAllByCategory(currCategory);
+				updateTasksByCategory(currCategory);
 			}
 		});
 		contentPane.add(clearAllTasksButton);
@@ -163,11 +166,11 @@ public class Frame extends JFrame {
 		contentPane.add(textField);
 		textField.setColumns(10);
 		textField.addActionListener(e -> {
-			if(!textField.getText().equalsIgnoreCase("") || currCategory != null){
+			if(!textField.getText().equalsIgnoreCase("")){
 			Task task = new Task(textField.getText());
-			task.setIdCategory(currCategory.getId());
+			task.setCategory(currCategory);
 			taskDao.add(task);
-			todoListModel.addElement(task);
+			updateTasksByCategory(currCategory);
 			textField.setText("");
 			}
 		});
@@ -178,7 +181,10 @@ public class Frame extends JFrame {
 		addNewTaskButton.setBackground(Utils.sColor);
 		addNewTaskButton.addActionListener(e -> {
 			if(!textField.getText().equalsIgnoreCase("")){
-			todoListModel.addElement(new Task(textField.getText()));
+			Task task = new Task(textField.getText());
+			task.setCategory(currCategory);
+			taskDao.add(task);
+			updateTasksByCategory(currCategory);
 			textField.setText("");
 			}
 		});
@@ -202,6 +208,7 @@ public class Frame extends JFrame {
 		
 		//----
 
+		/*
 		categoryName.addPropertyChangeListener(f -> {
 			if(!todoListModel.isEmpty()) {
 				todoListModel.removeAllElements();				
@@ -224,7 +231,7 @@ public class Frame extends JFrame {
 		});
 		// Add the label to your Swing application as needed
 
-		
+		*/
 	
 		//----
 		
@@ -233,11 +240,11 @@ public class Frame extends JFrame {
 				if (!e.getValueIsAdjusting()) {
 					int index = todoList.getSelectedIndex();
 					if (index >= 0) {
-						Task item = todoListModel.getElementAt(index);
-						item.setSelected(!item.getStatus());
-						taskDao.setState(item.getId(),item.getStatus());
-						todoListModel.removeElement(item);
-						doneListModel.addElement(item);
+						Task task = todoListModel.getElementAt(index);
+						task.setStatus(!task.getStatus());
+						taskDao.update(task);
+						todoListModel.remove(index);
+						updateTasksByCategory(currCategory);
 					}
 				}
 			});
@@ -245,11 +252,11 @@ public class Frame extends JFrame {
 				if (!e.getValueIsAdjusting()) {
 					int index = doneList.getSelectedIndex();
 					if (index >= 0) {
-						Task item = doneListModel.getElementAt(index);
-						item.setSelected(!item.getStatus());
-						taskDao.setState(item.getId(),item.getStatus());
-						doneListModel.removeElement(item);
-						todoListModel.addElement(item);
+						Task task = doneListModel.getElementAt(index);
+						task.setStatus(!task.getStatus());
+						taskDao.update(task);
+						doneListModel.remove(index);
+						updateTasksByCategory(currCategory);
 					}
 				}
 			});
@@ -301,6 +308,23 @@ public class Frame extends JFrame {
 	}
 
 
-	
+	private void updateTasksByCategory(Category category) {
+		List<Task> taskList = taskDao.findByCategory(category);
+		
+		todoListModel.removeAllElements();
+		doneListModel.removeAllElements();
+		
+		if(currCategory == null) {
+			return;
+		}
+		
+		for(Task t : taskList) {
+			if(t.getStatus() == false) {
+				todoListModel.addElement(t);
+			}else {
+				doneListModel.addElement(t);
+			}
+		}
+	}
 	
 }

@@ -66,8 +66,8 @@ public class Test {
 		
 		System.out.println("===============");
 		
-		taskDao.deleteAllByCategory(category);
-		System.out.println("deleted");
+		//taskDao.deleteAllByCategory(category);
+		//System.out.println("deleted");
 		
 		/*
 		Task task = taskDao.findByLabel("test3");

@@ -209,7 +209,7 @@ public class TaskDaoJDBC implements TaskDao{
 			st = conn.prepareStatement(
 					"DELETE FROM task "
 					+"WHERE idCategory = ? "
-					+"AND status = false");
+					+"AND status = true");
 			
 				st.setInt(1, category.getId());
 			

@@ -5,6 +5,7 @@
 ### Requirements
 - JDK (Java 17)
 - MySQL
+- MySQL JDBC Connector
 
 
 ### Build and run
